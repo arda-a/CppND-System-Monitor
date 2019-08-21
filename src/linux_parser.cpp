@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "linux_parser.h"
+#include "../include/linux_parser.h"
 
 using std::stof;
 using std::string;
@@ -99,8 +99,23 @@ float LinuxParser::MemoryUtilization() {
   return memutil;
 }
 
-// TODO: Read and return the system uptime
-long LinuxParser::UpTime() { return 0; }
+// Read and return the system uptime
+long LinuxParser::UpTime() {
+  std::string line, first, second;
+  long uptime = 0;
+  std::ifstream filestream(kProcDirectory + kUptimeFilename);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::istringstream linestream(line);
+      while (linestream >> first >> second) {
+        uptime = static_cast<long>(std::stof(first));
+        break;
+      }
+    }
+  }
+
+  return uptime;
+}
 
 // TODO: Read and return the number of jiffies for the system
 long LinuxParser::Jiffies() { return 0; }
@@ -118,11 +133,43 @@ long LinuxParser::IdleJiffies() { return 0; }
 // TODO: Read and return CPU utilization
 vector<string> LinuxParser::CpuUtilization() { return {}; }
 
-// TODO: Read and return the total number of processes
-int LinuxParser::TotalProcesses() { return 0; }
+// Read and return the total number of processes
+int LinuxParser::TotalProcesses() {
+  string strProcessCount;
+  string processes, line;
+  int processCount = 0;
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  if (stream.is_open()) {
+    while (std::getline(stream, line)) {
+      std::istringstream linestream(line);
+      linestream >> processes >> strProcessCount;
+      if (processes == "processes") {
+        processCount = std::stoi(strProcessCount);
+        break;
+      }
+    }
+  }
+  return processCount;
+}
 
-// TODO: Read and return the number of running processes
-int LinuxParser::RunningProcesses() { return 0; }
+// Read and return the number of running processes
+int LinuxParser::RunningProcesses() { 
+  string strProcessCount;
+  string procs_running, line;
+  int processCount = 0;
+  std::ifstream stream(kProcDirectory + kStatFilename);
+  if (stream.is_open()) {
+    while (std::getline(stream, line)) {
+      std::istringstream linestream(line);
+      linestream >> procs_running >> strProcessCount;
+      if (procs_running == "procs_running") {
+        processCount = std::stoi(strProcessCount);
+        break;
+      }
+    }
+  }
+  return processCount;
+ }
 
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
