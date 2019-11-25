@@ -5,6 +5,8 @@
 #include <regex>
 #include <string>
 
+#include "./process.h"
+
 namespace LinuxParser {
 // Paths
 const std::string kProcDirectory{"/proc/"};
@@ -19,6 +21,7 @@ const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
 
 // System
+std::vector<Process>& GetProcesses();
 float MemoryUtilization();
 long UpTime();
 std::vector<int> Pids();
@@ -40,11 +43,11 @@ enum CPUStates {
   kGuest_,
   kGuestNice_
 };
-std::vector<std::string> CpuUtilization();
-long Jiffies();
-long ActiveJiffies();
-long ActiveJiffies(int pid);
-long IdleJiffies();
+//std::vector<std::string> CpuUtilization();
+// long Jiffies();
+// long ActiveJiffies();
+// long ActiveJiffies(int pid);
+// long IdleJiffies();
 
 // Processes
 std::string Command(int pid);
